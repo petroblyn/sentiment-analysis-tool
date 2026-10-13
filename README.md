@@ -26,5 +26,15 @@ English only, small dictionary, no sarcasm detection. A trained model (Naive Bay
 - Insights report: generated in the dashboard
 - Technical explanation: this README and the bottom of the dashboard
 
+## Project structure
+```
+index.html        markup only
+css/styles.css    all styling and theme tokens
+js/data.js        sample data, lexicon, negators, intensifiers, topic keywords
+js/analyzer.js    scoring logic for one comment
+js/ui.js          reading input, rendering the dashboard, button events
+```
+Scripts load in that order via plain `<script>` tags, so it still works by double-clicking `index.html` (no server needed).
+
 ## Tech
 HTML, CSS and vanilla JavaScript. No dependencies.

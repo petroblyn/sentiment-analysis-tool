@@ -3,31 +3,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Sentiment Analysis Tool</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f3f6f4;--card:#fff;--ink:#1b2b2a;--mut:#5d6b69;--line:#d9e2de;--pos:#1f8a70;--neg:#c8553d;--neu:#8a94a6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a19;--card:#18272588;--ink:#e6efec;--mut:#9db0ac;--line:#2a3d3a;--pos:#3fc4a0;--neg:#ee866c;--neu:#9aa5b8}}
-:root[data-theme="dark"]{--bg:#101a19;--card:#182725;--ink:#e6efec;--mut:#9db0ac;--line:#2a3d3a;--pos:#3fc4a0;--neg:#ee866c;--neu:#9aa5b8}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Bricolage Grotesque",system-ui,sans-serif}
-main{max-width:1000px;margin:0 auto;padding:24px 16px 56px}
-h1{font-size:clamp(28px,5vw,44px);font-weight:800;margin:0 0 4px;letter-spacing:-.02em}
-h2{font-size:20px;margin:0 0 12px}p.sub{color:var(--mut);margin:0 0 24px;max-width:60ch}
-section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
-textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:6px;padding:10px;font:inherit;font-size:14px;background:transparent;color:var(--ink)}
-button{font:inherit;font-weight:600;background:var(--ink);color:var(--bg);border:0;border-radius:6px;padding:9px 16px;cursor:pointer;margin:8px 8px 0 0}
-button.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}button:focus-visible,textarea:focus-visible{outline:3px solid var(--pos);outline-offset:2px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-.kpi b{display:block;font-size:34px;line-height:1.1}.kpi span{color:var(--mut);font-size:14px}
-.bar{display:flex;height:28px;border-radius:5px;overflow:hidden;margin-top:14px}.bar div{height:100%}
-.row{display:grid;grid-template-columns:90px 1fr 56px;gap:10px;align-items:center;margin:7px 0;font-size:14px}
-.track{height:14px;background:var(--line);border-radius:4px;position:relative}.fill{position:absolute;top:0;height:100%;border-radius:4px}
-.mid{position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--mut)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:700px){.two{grid-template-columns:1fr}}
-.chip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:13px;margin:0 6px 6px 0;border:1px solid}
-.chip.p{color:var(--pos);border-color:var(--pos)}.chip.n{color:var(--neg);border-color:var(--neg)}
-.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
-.tag{font-weight:600}.Positive{color:var(--pos)}.Negative{color:var(--neg)}.Neutral{color:var(--neu)}
-li{margin-bottom:6px}code{background:var(--line);padding:1px 5px;border-radius:4px;font-size:13px}
-</style></head><body><main>
+<link rel="stylesheet" href="css/styles.css"></head><body><main>
 <h1>Sentiment Analysis Tool</h1>
 <p class="sub">Paste customer comments, one per line. The tool scores each one, finds what drives the mood, and writes the insights for you. Runs entirely in your browser.</p>
 
@@ -61,84 +37,6 @@ li{margin-bottom:6px}code{background:var(--line);padding:1px 5px;border-radius:4
 <p><b>Limitations.</b> English only, small dictionary, no sarcasm detection. For production, compare against a labelled sample and consider a trained model such as a Hugging Face sentiment pipeline.</p>
 </section>
 </main>
-<script>
-const SAMPLE=`The delivery was super fast and the packaging was excellent!
-Customer support never replied to my emails. Terrible service.
-Great value for the price, I love it.
-The app keeps crashing and it is very frustrating.
-Product is okay, nothing special.
-Support team was helpful and friendly, problem solved in minutes.
-Way too expensive for what you get. Disappointed.
-Delivery was late and the box arrived damaged.
-Amazing quality, works perfectly and looks beautiful.
-The app is not easy to use, confusing menus.
-Price is fair and the quality is good.
-I waited two weeks and nobody helped me. Awful experience.
-Really happy with the new update, the app is smooth and fast.
-Average product. Arrived on time.
-Not bad at all, actually quite impressed with the quality.
-The price went up again, very annoying.
-Support was slow but eventually fixed the issue.
-Best purchase I have made this year, highly recommend!
-Poor quality, it broke after one week.
-The delivery driver was polite and the parcel arrived early.
-Checkout is broken and the app is useless.
-Cheap and reliable, I am satisfied.
-I hate the new design, it is slow and ugly.
-Excellent customer service, they went above and beyond.`;
-const L={};
-"good:2 great:3 excellent:3 amazing:3 awesome:3 love:3 loved:3 happy:2 fast:1.5 quick:1.5 helpful:2 friendly:2 polite:1.5 perfect:3 beautiful:2.5 smooth:2 reliable:2 impressed:2.5 satisfied:2 recommend:2 best:3 fair:1 cheap:1 value:1.5 easy:1.5 nice:2 solved:2 fixed:1.5 early:1 enjoy:2 wonderful:3 fantastic:3 superb:3 pleased:2 brilliant:3 above:0.5 beyond:0.5 works:1 improved:2 ".split(" ").forEach(x=>{const[a,b]=x.split(":");if(a)L[a]=+b});
-"bad:-2 terrible:-3 awful:-3 horrible:-3 hate:-3 poor:-2.5 slow:-1.5 late:-1.5 damaged:-2.5 broken:-2.5 broke:-2.5 crashing:-2.5 crashes:-2.5 useless:-3 frustrating:-2.5 annoying:-2 disappointed:-2.5 disappointing:-2.5 expensive:-1.5 confusing:-2 ugly:-2 rude:-2.5 waited:-1 never:-1 worst:-3 unhappy:-2 problem:-1.5 issue:-1 error:-2 refund:-1 scam:-3 nobody:-1 buggy:-2 failed:-2 worse:-2.5 overpriced:-2.5 complaint:-2 cancel:-1.5".split(" ").forEach(x=>{const[a,b]=x.split(":");L[a]=+b});
-const NEG=new Set("not no never n't isn't wasn't don't didn't cannot hardly without nothing".split(" "));
-const INT={very:1.5,extremely:1.8,really:1.4,so:1.3,super:1.5,too:1.3,quite:1.2,highly:1.5,slightly:.6,somewhat:.6,bit:.6};
-const TOP={Price:/pric|expens|cheap|value|cost|pay/,Support:/support|service|staff|team|help|reply|replied|emails?/,Delivery:/deliver|driver|parcel|box|packag|arriv|shipping/,Quality:/qualit|broke|broken|works|reliable|design|looks|product/,"App & website":/\bapp\b|update|checkout|menu|website|crash/};
-function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
-function score(t){
- const w=t.toLowerCase().replace(/n't/g," not").replace(/[^a-z\s]/g," ").split(/\s+/).filter(Boolean);
- let s=0;const hits=[];
- w.forEach((x,i)=>{if(!(x in L))return;let v=L[x];
-  for(let k=1;k<=3&&i-k>=0;k++){const p=w[i-k];if(p in INT){v*=INT[p]}else if(NEG.has(p)){v*=-.8;break}}
-  s+=v;hits.push([x,v])});
- if(s!==0)s+=Math.sign(s)*Math.min((t.match(/!/g)||[]).length,3)*.3;
- const c=s/Math.sqrt(s*s+15);
- return{c,label:c>=.15?"Positive":c<=-.15?"Negative":"Neutral",hits}}
-function run(){
- const lines=document.getElementById("in").value.split("\n").map(x=>x.trim()).filter(Boolean);
- if(!lines.length){document.getElementById("out").hidden=true;return}
- const R=lines.map(t=>({t,...score(t)}));
- const n=R.length,cnt={Positive:0,Negative:0,Neutral:0};R.forEach(r=>cnt[r.label]++);
- const avg=R.reduce((a,r)=>a+r.c,0)/n;
- const pct=k=>Math.round(cnt[k]/n*100);
- document.getElementById("kpis").innerHTML=`<div class="kpi"><b>${n}</b><span>comments</span></div><div class="kpi"><b class="Positive">${pct("Positive")}%</b><span>positive</span></div><div class="kpi"><b class="Negative">${pct("Negative")}%</b><span>negative</span></div><div class="kpi"><b>${avg.toFixed(2)}</b><span>average score (−1 to +1)</span></div>`;
- const bar=document.getElementById("bar");bar.setAttribute("aria-label",`Positive ${pct("Positive")}%, neutral ${pct("Neutral")}%, negative ${pct("Negative")}%`);
- bar.innerHTML=["Positive","Neutral","Negative"].map(k=>`<div style="width:${cnt[k]/n*100}%;background:var(--${k[0]=="P"?"pos":k[0]=="N"&&k=="Negative"?"neg":"neu"})" title="${k}: ${cnt[k]}"></div>`).join("");
- // topics
- const T={};R.forEach(r=>{for(const k in TOP)if(TOP[k].test(r.t.toLowerCase())){(T[k]=T[k]||[]).push(r.c)}});
- const tl=Object.entries(T).map(([k,a])=>[k,a.reduce((x,y)=>x+y,0)/a.length,a.length]).sort((a,b)=>a[1]-b[1]);
- document.getElementById("topics").innerHTML=tl.map(([k,v,c])=>{const w=Math.abs(v)*50;const col=v>=0?"pos":"neg";
-  return`<div class="row"><span>${k}</span><div class="track"><div class="mid"></div><div class="fill" style="background:var(--${col});width:${w}%;${v>=0?"left:50%":"right:50%"}"></div></div><span>${v.toFixed(2)}</span></div>`}).join("")+`<p style="color:var(--mut);font-size:13px;margin:8px 0 0">Average score per topic. Bars to the right are positive.</p>`;
- // words
- const W={};R.forEach(r=>r.hits.forEach(([x,v])=>{(W[x]=W[x]||{s:0,n:0});W[x].s+=v;W[x].n++}));
- const we=Object.entries(W);const pw=we.filter(e=>e[1].s>0).sort((a,b)=>b[1].s-a[1].s).slice(0,10),nw=we.filter(e=>e[1].s<0).sort((a,b)=>a[1].s-b[1].s).slice(0,10);
- document.getElementById("words").innerHTML=`<p style="margin:0 0 6px"><b>Positive</b></p>${pw.map(e=>`<span class="chip p">${e[0]} ×${e[1].n}</span>`).join("")}<p style="margin:10px 0 6px"><b>Negative</b></p>${nw.map(e=>`<span class="chip n">${e[0]} ×${e[1].n}</span>`).join("")}`;
- // insights
- const I=[];
- const dom=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
- I.push(`Overall mood is <b>${avg>=.15?"positive":avg<=-.15?"negative":"mixed"}</b>: ${pct("Positive")}% positive, ${pct("Neutral")}% neutral, ${pct("Negative")}% negative across ${n} comments (most common label: ${dom}).`);
- if(tl.length){const b=tl[0],g=tl[tl.length-1];
-  if(b[1]<0)I.push(`<b>${b[0]}</b> is the biggest pain point, averaging ${b[1].toFixed(2)} across ${b[2]} comment${b[2]>1?"s":""}. Fixing it offers the largest gain in satisfaction.`);
-  if(g[1]>0)I.push(`<b>${g[0]}</b> is the strongest area, averaging +${g[1].toFixed(2)}. Use it in marketing and protect it.`)}
- if(nw.length)I.push(`The most common complaint words are ${nw.slice(0,3).map(e=>"<i>"+e[0]+"</i>").join(", ")}. Reading these comments first will show the root causes fastest.`);
- if(pw.length)I.push(`Customers praise things with words like ${pw.slice(0,3).map(e=>"<i>"+e[0]+"</i>").join(", ")}.`);
- const worst=[...R].sort((a,b)=>a.c-b.c)[0];
- I.push(`Most negative comment (${worst.c.toFixed(2)}): “${esc(worst.t)}”`);
- I.push(`<b>Recommended actions:</b> (1) prioritise the lowest-scoring topic, (2) follow up with customers who left negative comments, (3) re-run this analysis after changes to measure improvement.`);
- document.getElementById("ins").innerHTML=I.map(x=>`<li>${x}</li>`).join("");
- document.getElementById("rows").innerHTML=R.map(r=>`<tr><td>${esc(r.t)}</td><td class="tag ${r.label}">${r.label}</td><td>${r.c.toFixed(2)}</td></tr>`).join("");
- document.getElementById("out").hidden=false;
-}
-document.getElementById("go").onclick=run;
-document.getElementById("sample").onclick=()=>{document.getElementById("in").value=SAMPLE;run()};
-document.getElementById("clear").onclick=()=>{document.getElementById("in").value="";run()};
-document.getElementById("in").value=SAMPLE;run();
-</script></body></html>
+<script src="js/data.js"></script>
+<script src="js/analyzer.js"></script>
+<script src="js/ui.js"></script></body></html>
